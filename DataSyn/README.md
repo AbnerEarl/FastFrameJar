@@ -8,7 +8,7 @@
 
 2、在maven配置文件，即 pom.xml 中，添加以下依赖：
   
-  """
+  ```
   
   <!-- https://mvnrepository.com/artifact/org.dom4j/dom4j -->
     <dependency>
@@ -39,10 +39,11 @@
       <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/syndata.jar</systemPath>
     </dependency>
     
-   """
+   ```
     
 ## 日志接口
-  """
+
+  ```
   
   public class MyLogRecord implements LogInterface {
     @Override
@@ -52,11 +53,11 @@
     }
   }
   
- """
+ ```
 
 ## 全量同步
 
-"""
+```
   public class TestDataSyn {
     public static void main(String[] args) {
         DatabaseInfo sourceDb=new DatabaseInfo();
@@ -77,11 +78,11 @@
       }
    }
 
-"""
+```
 
 ## 增量同步
 
-  """
+  ```
   
   public class TestDataSyn {
     public static void main(String[] args) {
@@ -103,7 +104,7 @@
       }
     }
 
-  """
+  ```
   
 ## 其它方法
 数据同步中还有其他方法，根据实际业务需要进行使用！
