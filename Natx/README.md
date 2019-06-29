@@ -33,7 +33,7 @@
       <artifactId>natx</artifactId>
       <version>1.0</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/natx.jar</systemPath>  <!--${basedir}-->
+      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/natx.jar</systemPath>
     </dependency>
     
    ```
@@ -52,11 +52,11 @@
  
 ## 服务端停止服务
 
-···
+```
 
 NatxServer.endNat();
 
-···
+```
 
 ## 客户端映射穿透
 
