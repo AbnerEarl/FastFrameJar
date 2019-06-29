@@ -39,24 +39,24 @@
       <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/syndata.jar</systemPath>
     </dependency>
     
-    """
+   """
     
 ## 日志接口
   """
+  
   public class MyLogRecord implements LogInterface {
     @Override
     public boolean recordDataSynLog(String message) {
         System.out.println("日志插入数据库成功！");
         return false;
     }
-}
-  """
+  }
+  
+ """
 
 ## 全量同步
 
 """
-
-
   public class TestDataSyn {
     public static void main(String[] args) {
         DatabaseInfo sourceDb=new DatabaseInfo();
@@ -74,12 +74,13 @@
 
         MyLogRecord myLogRecord=new MyLogRecord();
         SynDataMain.synDatabaseAll(sourceDb,destinDb,tableList,20,100000,myLogRecord);
-     }
-  }
+      }
+   }
 
 """
 
 ## 增量同步
+
   """
   
   public class TestDataSyn {
@@ -99,8 +100,8 @@
 
         MyLogRecord myLogRecord=new MyLogRecord();
         SynDataMain.synDatabaseIncrement(sourceDb,destinDb,tableList,20,100000,myLogRecord);
-     }
-  }
+      }
+    }
 
   """
   
