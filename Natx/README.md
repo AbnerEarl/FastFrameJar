@@ -1,6 +1,6 @@
-# 海量数据高效同步
+# 内网穿透及映射
 
-满足mysql、oracle等主流数据库进行跨库数据传输、备份、同步。
+把内网主机映射成为公网主机，满足内外网穿透，在不同的业务场景中，需要把内网的主机映射成为公网主机来对外提供服务，在公网主机有限的情况，基于netty根据端口号做一个数据映射服务，可以穿透网站、数据库等各种应用，满足日常的使用。
 
 ## 使用方法
 
@@ -10,101 +10,60 @@
   
   ```
   
-  <!-- https://mvnrepository.com/artifact/org.dom4j/dom4j -->
-    <dependency>
-      <groupId>dom4j</groupId>
-      <artifactId>dom4j</artifactId>
-      <version>1.6.1</version>
-    </dependency>
-
-    <!-- https://mvnrepository.com/artifact/jaxen/jaxen -->
-    <dependency>
-      <groupId>jaxen</groupId>
-      <artifactId>jaxen</artifactId>
-      <version>1.1-beta-6</version>
+  <dependency>
+      <groupId>io.netty</groupId>
+      <artifactId>netty-all</artifactId>
+      <version>4.1.33.Final</version>
     </dependency>
 
     <dependency>
-      <groupId>mysql</groupId>
-      <artifactId>mysql-connector-java</artifactId>
-      <version>5.1.40</version>
-      <!--<scope>runtime</scope>-->
+      <groupId>commons-cli</groupId>
+      <artifactId>commons-cli</artifactId>
+      <version>1.4</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>20180813</version>
     </dependency>
     
     <dependency>
-      <groupId>syndata</groupId>
-      <artifactId>syndata</artifactId>
+      <groupId>natx</groupId>
+      <artifactId>natx</artifactId>
       <version>1.0</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/syndata.jar</systemPath>
+      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/natx.jar</systemPath>
     </dependency>
     
    ```
     
-## 日志接口
+## 服务端开启服务
 
   ```
   
-  public class MyLogRecord implements LogInterface {
-    @Override
-    public boolean recordDataSynLog(String message) {
-        System.out.println("日志插入数据库成功！");
-        return false;
+  public class TestNat {
+    public static void main(String[] args) {
+        NatxServer.startNat(9090,"123456");
     }
-  }
+}
   
  ```
-
-## 全量同步
-
-```
-  public class TestDataSyn {
-    public static void main(String[] args) {
-        DatabaseInfo sourceDb=new DatabaseInfo();
-        sourceDb.setDatabaseURL("jdbc:mysql://127.0.0.1:3306/test");
-        sourceDb.setUserName("root");
-        sourceDb.setPassword("123456");
-
-        DatabaseInfo destinDb=new DatabaseInfo();
-        destinDb.setDatabaseURL("jdbc:mysql://119.23.30.116:3306/test");
-        destinDb.setUserName("root");
-        destinDb.setPassword("123456");
-
-        List<String> tableList=new ArrayList<>();
-        tableList.add("test");
-
-        MyLogRecord myLogRecord=new MyLogRecord();
-        SynDataMain.synDatabaseAll(sourceDb,destinDb,tableList,20,100000,myLogRecord);
-      }
-   }
+ 
+## 服务端停止服务
 
 ```
 
-## 增量同步
+NatxServer.endNat();
 
-  ```
-  
-  public class TestDataSyn {
-    public static void main(String[] args) {
-        DatabaseInfo sourceDb=new DatabaseInfo();
-        sourceDb.setDatabaseURL("jdbc:mysql://127.0.0.1:3306/test");
-        sourceDb.setUserName("root");
-        sourceDb.setPassword("123456");
+```
 
-        DatabaseInfo destinDb=new DatabaseInfo();
-        destinDb.setDatabaseURL("jdbc:mysql://119.23.30.116:3306/test");
-        destinDb.setUserName("root");
-        destinDb.setPassword("123456");
+## 客户端映射穿透
 
-        List<String> tableList=new ArrayList<>();
-        tableList.add("test");
+https://github.com/YouAreOnlyOne/NATnetty
 
-        MyLogRecord myLogRecord=new MyLogRecord();
-        SynDataMain.synDatabaseIncrement(sourceDb,destinDb,tableList,20,100000,myLogRecord);
-      }
-    }
 
-  ```
+
   
 ## 其它方法
 数据同步中还有其他方法，根据实际业务需要进行使用！
