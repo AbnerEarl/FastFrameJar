@@ -58,7 +58,7 @@ msgPushServer.sendMessageToOneUser(userMessage);
 
 ```
 
-## 客户端映射穿透
+## 客户端接受消息
 
 ```
 <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/2.0.3/socket.io.js"></script>
