@@ -32,11 +32,11 @@
     </dependency>
     
     <dependency>
-      <groupId>syndata</groupId>
-      <artifactId>syndata</artifactId>
+      <groupId>datasyn</groupId>
+      <artifactId>datasyn</artifactId>
       <version>1.0</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/syndata.jar</systemPath>
+      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/datasyn.jar</systemPath>
     </dependency>
     
    ```
