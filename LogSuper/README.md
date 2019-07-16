@@ -61,6 +61,7 @@ public class TestGetUserBySession implements GetUserBySession {
 public class TestSaveOperateLog implements SaveOperateLog {
     @Override
     public boolean saveUserOperateLog(UserOperateLog userOperateLog) {
+        //可以通过调用Service方法对日志信息保存到数据库，下面只是进行简单的打印测试
         System.out.println(userOperateLog.getUserName());
         System.out.println(userOperateLog.getMethodName());
         System.out.println(userOperateLog.getRequestArgs());
@@ -92,7 +93,7 @@ public class TestLogSupervise extends RequestLogAspect {
         DatabaseInfo databaseInfo=new DatabaseInfo();
         databaseInfo.setDatabaseURL("jdbc:mysql://39.1.96.1:3306/bess_cloud_cloud?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&useSSL=false");
         databaseInfo.setUserName("root");
-        databaseInfo.setPassword("rjl9aThxCa2wz+oz");
+        databaseInfo.setPassword("123456");
         autoSaveLog(databaseInfo);
     }
 }
