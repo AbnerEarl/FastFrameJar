@@ -19,7 +19,7 @@ https://github.com/YouAreOnlyOne/FastFrameJar/tree/master/MsgPush
 基于AOP和注解实现用户每个操作的记录。
 
 # 问题讨论
-[点击传送](https://github.com/YouAreOnlyOne/FastFrameJar/issues)
+## [点击传送](https://github.com/YouAreOnlyOne/FastFrameJar/issues)
 
 # 其它信息
 1.项目还有很多不完善的地方，欢迎大家指导。
