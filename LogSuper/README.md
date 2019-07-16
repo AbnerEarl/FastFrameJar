@@ -1,4 +1,4 @@
-# web系统日志记录
+# web系统通用日志监测
 
 基于面向切面的思想，使用aspectj和CGliB代理实现非侵入式用户操作日志记录，通过自定义注解实现获得每个方法的注释、功能等信息，以及日志类型的分类，通过暴露从session获取用户信息和保存日志两个接口，实现不同项目的快速接入。
 
@@ -45,7 +45,7 @@
     
    ```
     
-## 接入
+## 接入项目
 1、新建一个类实现GetUserBySession接口，实现从session中获取用户信息：
 ```
 public class TestGetUserBySession implements GetUserBySession {
@@ -105,4 +105,14 @@ public class TestLogSupervise extends RequestLogAspect {
 <bean id="logService" class="com.construct.test.log.TestLogSupervise"></bean>
 <aop:aspectj-autoproxy expose-proxy="true" proxy-target-class="true" />
 <context:annotation-config/>
+```
+
+## 其它可选
+如果希望用户请求时所执行的方法，对应的说明和注释能够同步存入用户操作日志记录中，则需在每个请求方法前加入一行注解 @MethodLog()，如下：
+```
+    @RequestMapping(value = "user/login")
+    @MethodLog(remark = "请求登录页面",operType = "0",desc = "移动端用户请求登录页面")
+    public String loginIndex(Model model){
+        return "mobile/login/login";
+    }
 ```
