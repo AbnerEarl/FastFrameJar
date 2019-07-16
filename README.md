@@ -17,3 +17,18 @@ https://github.com/YouAreOnlyOne/FastFrameJar/tree/master/Natx
 https://github.com/YouAreOnlyOne/FastFrameJar/tree/master/MsgPush
 # 日志监听
 基于AOP和注解实现用户每个操作的记录。
+
+# 问题讨论
+[点击传送](https://github.com/YouAreOnlyOne/FastFrameJar/issues)
+
+# 其它信息
+1.项目还有很多不完善的地方，欢迎大家指导。
+
+2.项目持续更新开源，有兴趣加入项目或者跟随项目的伙伴，可以邮件联系！
+
+3.项目不定期更新和迭代，感兴趣的伙伴可以点击上方的 ~ fork、star ~。
+
+4.有些设计和功能的实现，参考了GitHub上开源项目。
+
+# 作者邮箱
+ycj52011@outlook.com
