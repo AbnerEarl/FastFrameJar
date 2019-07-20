@@ -1,6 +1,6 @@
-# 内网穿透及映射
+# 自动代码生成器
 
-把内网主机映射成为公网主机，满足内外网穿透，在不同的业务场景中，需要把内网的主机映射成为公网主机来对外提供服务，在公网主机有限的情况，基于netty根据端口号做一个数据映射服务，可以穿透网站、数据库等各种应用，满足日常的使用。
+根据数据表自动生成相关代码，例如 entity、controller、service、mapper文件、dao接口也就是mapper文件对应的接口。
 
 ## 使用方法
 
@@ -11,59 +11,51 @@
   ```
   
   <dependency>
-      <groupId>io.netty</groupId>
-      <artifactId>netty-all</artifactId>
-      <version>4.1.33.Final</version>
-    </dependency>
-
-    <dependency>
-      <groupId>commons-cli</groupId>
-      <artifactId>commons-cli</artifactId>
-      <version>1.4</version>
-    </dependency>
-
-    <dependency>
-      <groupId>org.json</groupId>
-      <artifactId>json</artifactId>
-      <version>20180813</version>
+      <groupId>com.baomidou</groupId>
+      <artifactId>mybatis-plus</artifactId>
+      <version>2.1.8</version>
     </dependency>
     
     <dependency>
-      <groupId>natx</groupId>
-      <artifactId>natx</artifactId>
+      <groupId>com.baomidou</groupId>
+      <artifactId>mybatis-plus-generator</artifactId>
+      <version>3.1.1</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>autocode</groupId>
+      <artifactId>autocode</artifactId>
       <version>1.0</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/natx.jar</systemPath>
+      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/autocode.jar</systemPath>
     </dependency>
     
    ```
     
-## 服务端开启服务
+## 生成代码
 
   ```
   
-  public class TestNat {
-    public static void main(String[] args) {
-        NatxServer.startNat(9090,"123456");
-    }
-}
+  DatabaseInfo sourceDb=new DatabaseInfo();
+  sourceDb.setDatabaseURL("jdbc:mysql://localhost:3306/world?useUnicode=true&useJDBCCompliantTimezoneShift=true&useLegacyDatetimeCode=false&serverTimezone=UTC");
+  sourceDb.setUserName("root");
+  sourceDb.setPassword("wdsjnsjydjy");
+  sourceDb.setDriverClass("com.mysql.cj.jdbc.Driver");
+  CodeInfo codeInfo=new CodeInfo();
+  String []tables={"city","sys_set_parameter"};
+  Generator.generateCodeByAllTables(sourceDb,codeInfo);
   
  ```
  
-## 服务端停止服务
-
-```
-
-NatxServer.endNat();
-
-```
-
-## 客户端映射穿透
-
-https://github.com/YouAreOnlyOne/NATnetty
-
-
 
   
 ## 其它方法
-数据同步中还有其他方法，根据实际业务需要进行使用！
+根据mapper.xml生成sql语句！
+
+```
+try {
+     CreateSql.generateSql("E:\\IdeaProjects\\MyFrame\\FastFrame\\src\\main\\resources\\mapper","test.sql");
+    } catch (IOException e) {
+      e.printStackTrace();
+   }
+```
