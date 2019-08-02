@@ -1,6 +1,6 @@
 # 定时任务
 
-通过把quartz框架进行封装和整合，使得使用起来更加简单，去除原来实现任务的动态的增删查改需要12张表，改为修改后的一张表，通过类路径和方法名，使用反射调用相关的方法执行，service 封装了增删查改的相关方法，以及触发任务、执行任务、移除任务、关闭定时任务容器等方法。
+通过把quartz框架进行封装和整合，使得使用起来更加简单，去除原来实现任务的动态的增删查改需要 12 张表，改为修改后的 1 张表实现，通过类路径和方法名，使用反射调用相关的方法执行，service 封装了增删查改的相关方法，以及触发任务、执行任务、移除任务、关闭定时任务容器等方法。
 
 ## 使用方法
 
@@ -61,7 +61,7 @@ com.ycj.fastframe.quartz.service
  ```
  3、继承加注解实现扫描装载
  
- 如果用继承加注解实现扫描装载，如第二点的 <bean id="userUtils" class="com.ycj.fastframe.quartz.util.SpringContextHolder"/> ，可用下面方式实现：
+ 如果用继承加注解实现扫描装载，如上面第二点的 <bean id="userUtils" class="com.ycj.fastframe.quartz.util.SpringContextHolder"/> ，可用下面方式实现：
  
  1）、新建一个类：MySpringHolder，继承SpringContextHolder：
  ```
@@ -98,11 +98,12 @@ public class MyTask {
 ```
 
 ## 生成数据表
+简单设置数据库连接信息，自动生成相应的数据表。
 ```
 public class TestQuartz {
     public static void main(String[] args) {
         DatabaseInfo databaseInfo=new DatabaseInfo();
-        databaseInfo.setDatabaseURL("jdbc:mysql://127.0.0.1:3306/bess_cloud_cloud?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&useSSL=false");
+        databaseInfo.setDatabaseURL("jdbc:mysql://127.0.0.1:3306/db_name?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&useSSL=false");
         databaseInfo.setUserName("root");
         databaseInfo.setPassword("123456");
         QuartzJob quartzJob=new QuartzJob();
@@ -169,7 +170,7 @@ public class QuartzController extends ScheduleJobController {
 ```
 
 ## Service 类介绍
-service主要包含两个QuartzService 和ScheduleJobServiceImpl，前者没有实现与数据库的交互，后者实现了与数据库的交互，各个service中都包含相应的增删改查方法。
+service主要包含两个QuartzService 和ScheduleJobServiceImpl，前者没有实现与数据库的交互，后者实现了与数据库的交互，各个service中都包含相应的增删改查方法，使用时可以点进去详细查看。
 
 ## 任务方法实现的另一种方式
 除了上面介绍的在一个任务类中编写相关的任务方法外，还支持实现接口的方式，比如新建一个类TaskDataImpl。
@@ -196,7 +197,7 @@ public class TestQuartz {
             Thread.sleep(5000);
             System.out.println("【修改job1时间】开始(每2秒输出一次)...");
             quartzManager.modifyJobTime("test", "test", "test", "test", "0/2 * * * * ?");
-//
+
             Thread.sleep(10000);
             System.out.println("【移除job1定时】开始...");
             quartzManager.removeJob("test", "test", "test", "test");
