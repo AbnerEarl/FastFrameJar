@@ -17,6 +17,8 @@ https://github.com/YouAreOnlyOne/FastFrameJar/tree/master/Natx
 https://github.com/YouAreOnlyOne/FastFrameJar/tree/master/MsgPush
 # 日志监听
 基于AOP和注解实现用户每个操作的记录。
+## 详细使用
+https://github.com/YouAreOnlyOne/FastFrameJar/tree/master/LogSuper
 
 # 问题讨论
 ## [点击传送](https://github.com/YouAreOnlyOne/FastFrameJar/issues)
