@@ -32,6 +32,12 @@
     </dependency>
     
     <dependency>
+      <groupId>com.oracle</groupId>
+      <artifactId>ojdbc6</artifactId>
+      <version>11.2.0.3</version>
+    </dependency>
+    
+    <dependency>
       <groupId>datasyn</groupId>
       <artifactId>datasyn</artifactId>
       <version>1.0</version>
@@ -45,7 +51,7 @@
 
   ```
   
-  public class MyLogRecord implements LogInterface {
+  public class MyLogRecord implements DataSynLog {
     @Override
     public boolean recordDataSynLog(String message) {
         System.out.println("日志插入数据库成功！");
@@ -73,8 +79,11 @@
         List<String> tableList=new ArrayList<>();
         tableList.add("test");
 
+        //不带日志监听
+        SynDataMain.synDatabaseAllData(sourceDb,destinDb,tableList,20,100000,false,null);
+        //带日志存储
         MyLogRecord myLogRecord=new MyLogRecord();
-        SynDataMain.synDatabaseAll(sourceDb,destinDb,tableList,20,100000,myLogRecord);
+        SynDataMain.synDatabaseAllData(destinDb,sourceDb,tableList,20,100000,false,myLogRecord);
       }
    }
 
@@ -100,7 +109,7 @@
         tableList.add("test");
 
         MyLogRecord myLogRecord=new MyLogRecord();
-        SynDataMain.synDatabaseIncrement(sourceDb,destinDb,tableList,20,100000,myLogRecord);
+        SynDataMain.synDatabaseIncrementData(destinDb,sourceDb,tableList,20,100000,false,myLogRecord);
       }
     }
 
