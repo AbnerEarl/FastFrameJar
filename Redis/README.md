@@ -1,6 +1,6 @@
-# web系统通用日志监测
+# Redis简单集成到Spring框架
 
-基于面向切面的思想，使用aspectj和CGliB代理实现非侵入式用户操作日志记录，通过自定义注解实现获得每个方法的注释、功能等信息，以及日志类型的分类，通过暴露从session获取用户信息和保存日志两个接口，实现不同项目的快速接入。
+为了更简单的使用 redis ，把redis常用的工具类、配置类，进行了封装，只需要安装完redis之后，在项目简单配置下，就可以使用redis。其主要作用是利用内存换速度，让数据请求更多的命中在redis缓存中，不再每次都去请求数据库，从而提升性能。
 
 ## 使用方法
 
@@ -10,109 +10,219 @@
   
   ```
   
-   <dependency>
-      <groupId>org.aspectj</groupId>
-      <artifactId>aspectjweaver</artifactId>
-      <version>1.8.13</version>
-    </dependency>
-
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <version>5.0.4.RELEASE</version>
+      <groupId>org.springframework.data</groupId>
+      <artifactId>spring-data-redis</artifactId>
+      <version>1.6.0.RELEASE</version>
     </dependency>
-
+   
     <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-web</artifactId>
-      <version>5.0.4.RELEASE</version>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-pool2</artifactId>
+      <version>2.6.2</version>
     </dependency>
-
+   
     <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-      <version>2.5</version>
-      <scope>provided</scope>
+      <groupId>redis.clients</groupId>
+      <artifactId>jedis</artifactId>
+      <version>2.7.2</version>
     </dependency>
     
     <dependency>
-      <groupId>logsuper</groupId>
-      <artifactId>logsuper</artifactId>
+      <groupId>redis</groupId>
+      <artifactId>redis</artifactId>
       <version>1.0</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/logsuper.jar</systemPath>
+      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/redis.jar</systemPath>
     </dependency>
     
    ```
     
 ## 接入项目
-1、新建一个类实现GetUserBySession接口，实现从session中获取用户信息：
+
+1、在spring配置文件中加入相关配置：
 ```
-public class TestGetUserBySession implements GetUserBySession {
-    @Override
-    public OperateUser getUserByRequestSession(HttpServletRequest request) {
-        return null;
+ <!--Spring整合Redis-->
+    <!--设置连接池-->
+    <bean id="poolConfig" class="redis.clients.jedis.JedisPoolConfig">
+        <!-- 最小空闲连接数 -->
+        <property name="minIdle" value="5"/>
+        <!-- 最大空闲连接数 -->
+        <property name="maxIdle" value="300"/>
+        <!-- 最大连接数 -->
+        <property name="maxTotal" value="600" />
+        <!-- 每次释放连接的最大数目 -->
+        <property name="numTestsPerEvictionRun" value="1024" />
+        <!-- 释放连接的扫描间隔（毫秒） -->
+        <property name="timeBetweenEvictionRunsMillis" value="30000" />
+        <!-- 连接最小空闲时间 -->
+        <property name="minEvictableIdleTimeMillis" value="1800000" />
+        <!-- 获取连接时的最大等待毫秒数,小于零:阻塞不确定的时间,默认-1 -->
+        <property name="maxWaitMillis" value="1000" />
+        <!-- 在获取连接的时候检查有效性, 默认false -->
+        <property name="testOnBorrow" value="true" />
+        <property name="testOnReturn" value="true" />
+        <!-- 在空闲时检查有效性, 默认false -->
+        <property name="testWhileIdle" value="true" />
+        <!-- 连接耗尽时是否阻塞, false报异常,ture阻塞直到超时, 默认true -->
+        <property name="blockWhenExhausted" value="false" />
+        <!-- 连接空闲多久后释放, 当空闲时间>该值 且 空闲连接>最大空闲连接数 时直接释放 -->
+        <property name="softMinEvictableIdleTimeMillis" value="10000"/>
+    </bean>
+    
+    <!-- jedis客户端单机版 -->
+    <bean id="redisClient" class="redis.clients.jedis.JedisPool">
+        <constructor-arg name="host" value="192.168.99.100"></constructor-arg>
+        <constructor-arg name="port" value="6379"></constructor-arg>
+        <!--<constructor-arg name="password" value="123456"></constructor-arg>-->
+        <constructor-arg name="poolConfig" ref="poolConfig"></constructor-arg>
+        <constructor-arg name="timeout" value="100000"></constructor-arg>
+    </bean>
+    <bean id="JedisClient" class="com.ycj.fastframe.redis.jedis.JedisClientSingle"/>
+
+
+    <!--配置redis模版和缓存-->
+    <!-- 配置JedisConnectionFacory -->
+    <bean id="jedisConnectionFactory" class="org.springframework.data.redis.connection.jedis.JedisConnectionFactory">
+        <property name="hostName" value="192.168.99.100" />
+        <property name="port" value="6379" />
+        <!--<property name="password" value="123456" />-->
+        <property name="database" value="0" />
+        <property name="poolConfig" ref="poolConfig" />
+    </bean>
+
+     <!--配置redistempLate-->
+    <bean id="redisTemplate" class="org.springframework.data.redis.core.RedisTemplate">
+        <property name="connectionFactory" ref="jedisConnectionFactory" />
+    </bean>
+
+     <!--配置RedisCacheManager-->
+    <bean id="redisCacheManager" class="org.springframework.data.redis.cache.RedisCacheManager">
+        <constructor-arg name="redisOperations" ref="redisTemplate" />
+        <property name="defaultExpiration" value="3000" />
+    </bean>
+
+     <!--配置RedisCacheConfig-->
+    <bean id="redisCacheConfig" class="com.ycj.fastframe.redis.cache.RedisCacheConfig">
+        <constructor-arg ref="jedisConnectionFactory" />
+        <constructor-arg ref="redisTemplate" />
+        <constructor-arg ref="redisCacheManager" />
+    </bean>
+    
+    
+    <!------------------------------------------- 集群版，与上面的单机版二选一 ----------------------------------------->
+    <!-- 配置jedis集群 -->
+    <bean class="redis.clients.jedis.JedisCluster">
+        <constructor-arg name="nodes">
+            <set>
+                <bean class="redis.clients.jedis.HostAndPort">
+                    <constructor-arg name="host" value="${cluster.host1}" />
+                    <constructor-arg name="port" value="${cluster.port1}" />
+                </bean>
+                <bean class="redis.clients.jedis.HostAndPort">
+                    <constructor-arg name="host" value="${cluster.host2}" />
+                    <constructor-arg name="port" value="${cluster.port2}" />
+                </bean>
+                <bean class="redis.clients.jedis.HostAndPort">
+                    <constructor-arg name="host" value="${cluster.host3}" />
+                    <constructor-arg name="port" value="${cluster.port3}" />
+                </bean>
+                <bean class="redis.clients.jedis.HostAndPort">
+                    <constructor-arg name="host" value="${cluster.host4}" />
+                    <constructor-arg name="port" value="${cluster.port4}" />
+                </bean>
+                <bean class="redis.clients.jedis.HostAndPort">
+                    <constructor-arg name="host" value="${cluster.host5}" />
+                    <constructor-arg name="port" value="${cluster.port5}" />
+                </bean>
+                <bean class="redis.clients.jedis.HostAndPort">
+                    <constructor-arg name="host" value="${cluster.host6}" />
+                    <constructor-arg name="port" value="${cluster.port6}" />
+                </bean>
+            </set>
+        </constructor-arg>
+    </bean>
+
+    <!--配置集群版工具类-->
+    <bean class="com.ycj.fastframe.redis.redis.RedisCluster" />
+
+```
+
+# 使用方法
+1、新建一个TestRedisService类，进行测试：
+```
+@Service
+public class TestRedisService {
+    @Autowired
+    private LogAlarmService logAlarmService;
+    @Autowired
+    JedisClientSingle jedisClient;
+
+
+    public String getUser(String id){
+        LogAlarm logAlarm=null;
+        long s = System.currentTimeMillis();
+        logAlarm= (LogAlarm) jedisClient.getObject(id);
+        long e = System.currentTimeMillis();
+        System.out.println("redis耗时："+(e-s));
+        if (logAlarm==null){
+            s=System.currentTimeMillis();
+            EntityWrapper<LogAlarm> userEntityWrapper=new EntityWrapper<>();
+            userEntityWrapper.where("id={0}",id);
+            logAlarm = logAlarmService.selectOne(userEntityWrapper);
+            e=System.currentTimeMillis();
+            System.out.println("数据库耗时："+(e-s));
+            if (logAlarm!=null){
+                jedisClient.setObject(id,logAlarm);
+            }
+
+        }else {
+            System.out.println("从redis缓存中命中");
+        }
+        return JSON.toJSONString(logAlarm);
+    }
+
+    @Cacheable("getAlarm")
+    public String getAlarm(String id){
+        long s=System.currentTimeMillis();
+        EntityWrapper<LogAlarm> userEntityWrapper=new EntityWrapper<>();
+        userEntityWrapper.where("id={0}",id);
+        LogAlarm logAlarm = logAlarmService.selectOne(userEntityWrapper);
+        long e=System.currentTimeMillis();
+        System.out.println("数据库耗时："+(e-s));
+
+        return JSON.toJSONString(logAlarm);
     }
 }
+
 ```
 
-2、新建一个类实现SaveOperateLog接口，实现日志的保存方法，（不实现具体的保存方法也可以，jar包配置了通过jdbc的方式保存日志信息到数据，这种方式不是很好，推荐通过注入Service方式实现日志保存方法，日志的实体为 UserOperateLog ）：
-```
-public class TestSaveOperateLog implements SaveOperateLog {
-    @Override
-    public boolean saveUserOperateLog(UserOperateLog userOperateLog) {
-        //可以通过调用Service方法对日志信息保存到数据库，下面只是进行简单的打印测试
-        System.out.println(userOperateLog.getUserName());
-        System.out.println(userOperateLog.getMethodName());
-        System.out.println(userOperateLog.getRequestArgs());
-        return false;
-    }
-}
-```
-
-3、新建一个类继承RequestLogAspect类，实现切面的定义和相关参数的初始化：
-```
-@Aspect
-@Component
-@Order(1)
-public class TestLogSupervise extends RequestLogAspect {
-
-    @Override
-    @Pointcut("execution(public * com.construct.controller.mobile.h5..*.*(..))")
-    public void webLog() {
-    }
-
-    @Override
-    public void initLogSaveAndGetUser() {
-        TestSaveOperateLog testSaveOperateLog=new TestSaveOperateLog();
-        this.saveOperateLog=testSaveOperateLog;
-
-        TestGetUserBySession testGetUserBySession=new TestGetUserBySession();
-        this.getUserBySession=testGetUserBySession;
-        //下面的参数是表示通过jdbc方式保存日志信息到数据库，如果自己实现了Service相关方法，只需要上面的参数即可，下面的不用管。
-        DatabaseInfo databaseInfo=new DatabaseInfo();
-        databaseInfo.setDatabaseURL("jdbc:mysql://39.1.96.1:3306/bess_cloud_cloud?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&useSSL=false");
-        databaseInfo.setUserName("root");
-        databaseInfo.setPassword("123456");
-        autoSaveLog(databaseInfo);
-    }
-}
-
- ```
+2、在Controller中调用相关的方法进行测试即可。
  
-4、在spring配置文件进行配置：
+
+## 配置问题
+关于整合redis，需要添加配置文件的问题，笔者对配置文件进行了初步的连接，也曾设想过通过注解来动态实现，其主要考虑使用了ClassPathXmlApplicationContext 进行初步的测试，如下新建一个MyRedisConfig类，加上@Component 注解，并使用 @PostConstruct 注解初始化方法，来加载并获得相关的 bean ：
 ```
-<bean id="logService" class="com.construct.test.log.TestLogSupervise"></bean>
-<aop:aspectj-autoproxy expose-proxy="true" proxy-target-class="true" />
-<context:annotation-config/>
+@Component
+public class MyRedisConfig {
+    public static ApplicationContext applicationContext;
+    public static JedisClientSingle jedisClient;
+    @PostConstruct
+    public void init(){
+        RedisInfo redisInfo=new RedisInfo();
+        redisInfo.setIp("192.168.99.100");
+        redisInfo.setPort(6379);
+        applicationContext = RedisConfig.initRedisSingle(redisInfo);
+        if (applicationContext!=null){
+            System.out.println("redis启动结果：true");
+            jedisClient= (JedisClientSingle) applicationContext.getBean("JedisClient");
+        }else {
+            System.out.println("redis启动结果：false");
+
+        }
+    }
+}
+
 ```
 
-## 其它可选
-如果希望用户请求时所执行的方法，对应的说明和注释能够同步存入用户操作日志记录中，则需在每个请求方法前加入一行注解 @MethodLog()，如下：
-```
-    @RequestMapping(value = "user/login")
-    @MethodLog(remark = "请求登录页面",operType = "0",desc = "移动端用户请求登录页面")
-    public String loginIndex(Model model){
-        return "mobile/login/login";
-    }
-```
+
