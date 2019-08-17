@@ -224,5 +224,5 @@ public class MyRedisConfig {
 }
 
 ```
-
+关于以上通过注解动态加载的方式，还不是很完善，需要进一步完善。
 
