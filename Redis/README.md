@@ -148,7 +148,7 @@
 
 ```
 
-# 使用方法
+## 使用示例
 1、新建一个TestRedisService类，进行测试：
 ```
 @Service
