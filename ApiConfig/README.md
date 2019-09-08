@@ -74,6 +74,21 @@ public class TestSwaggerApi extends ApiConfig {
   
 ```
 
+## 编写接口
+1、举例子
+```
+@Controller
+@RequestMapping("/person")
+@Api(value="个人业务")
+public class PersonController {
+    @RequestMapping(value="/getPerson",method= RequestMethod.GET)
+    @ApiOperation(httpMethod = "GET", value = "个人信息", produces = MediaType.APPLICATION_JSON_VALUE)
+    public @ResponseBody String getPersons() {
+        return "请求成功";
+    }
+}
+```
+
 ## 查看与测试接口
 
 1、在浏览器访问如下地址：
