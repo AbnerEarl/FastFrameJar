@@ -101,6 +101,8 @@ msgPushServer.isNotOnline();
 msgPushServer.sendMessageToPartUser();
 
 ## 注意事项
+
 1、在本地测试中，java 和 html或者客户端 都可以用 localhost 或者 127.0.0.1；
+
 2、在部署到公网服务器上，java中用公网服务器内网IP，html或者客户端用公网IP。
 
