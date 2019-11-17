@@ -40,12 +40,12 @@
       <artifactId>datasyn</artifactId>
       <version>1.0</version>
       <scope>system</scope>
-      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/ds.jar</systemPath>
+      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/dynamicds.jar</systemPath>
     </dependency>
     
    ```
     
-## 注册项目的数据源
+## 注册项目的数据源（这是必须要做的）
 
 继承DynamicDataSourceRegister类，并完成相关的方法重写。
 
@@ -86,7 +86,7 @@ public class MyDataSource extends DynamicDataSourceRegister {
   
  ```
 
-## 设置数据源切换规则
+## 设置数据源切换规则（这个可以四选一实现就行）
 
 架构中采用了LRU算法的缓存策略，以适应高并发和高性能需求，只需要继承BindDynamicDataSourceByUserIdentifier类，并完成相关的方法重写。
 
