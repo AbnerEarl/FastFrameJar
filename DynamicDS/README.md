@@ -36,8 +36,8 @@
   </dependency>
     
     <dependency>
-      <groupId>datasyn</groupId>
-      <artifactId>datasyn</artifactId>
+      <groupId>dynamicds</groupId>
+      <artifactId>dynamicds</artifactId>
       <version>1.0</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/dynamicds.jar</systemPath>
