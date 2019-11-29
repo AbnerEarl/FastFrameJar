@@ -215,6 +215,35 @@ public class TestQuartz {
 ## 其它方法
 定时任务中还有很多其他方法，根据实际业务需要进行使用！
 
+例如：在定时任务执行前的动作做一些其它的逻辑判断或数据处理。
+
+1、实现DataOperateByJob接口。
+
+```
+public class TaskOrder implements DataOperateByJob {
+    @Override
+    public void excuteDataOperate(ScheduleJob scheduleJob) {
+        //将待同步的计划写入静态变量中
+        MyTask.projctCode=scheduleJob.getJobGroup();
+        System.out.println("待同步数据库的项目编号："+  myTask.projctCode);
+
+    }
+}
+```
+
+2、在编写同步方法的所在类，添加接口赋值加载。
+
+```
+@Component
+public class MyTask {
+private static TaskOrder taskOrder=new TaskOrder();
+
+    static {
+        QuartzManager.dataOperateByJob=taskOrder;
+    }
+}
+```
+
 ## 常见问题及解决
 https://blog.csdn.net/u014374009/article/details/97638636
 

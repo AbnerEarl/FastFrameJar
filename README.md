@@ -27,6 +27,9 @@ https://github.com/YouAreOnlyOne/FastFrameJar/tree/master/LogSuper
 # 问题讨论
 ## [点击传送](https://github.com/YouAreOnlyOne/FastFrameJar/issues)
 
+# 技术使用
+https://blog.csdn.net/u014374009
+
 # 其它信息
 1.项目还有很多不完善的地方，欢迎大家指导。
 
