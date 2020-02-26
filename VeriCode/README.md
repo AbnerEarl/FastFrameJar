@@ -50,7 +50,12 @@
 
 ## 3.集成到项目
 
-### 3.1 下载 jar 包到本地；
+### 3.1 下载 jar 包到本地
+
+https://github.com/YouAreOnlyOne/FastFrameJar/tree/master/VeriCode
+
+里面的 vericode.jar 下载到本地。
+
 
 ### 3.2 maven方式引入
 
