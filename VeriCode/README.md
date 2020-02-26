@@ -103,6 +103,7 @@
 
 ### 4.1.在SpringMVC中使用
 ```java
+//使用默认字体
 @Controller
 public class CaptchaController {
     
@@ -111,6 +112,22 @@ public class CaptchaController {
         CaptchaUtil.out(request, response);
     }
 }
+
+//使用指定字体
+@Controller
+public class VeriCodeController {
+    @RequestMapping("/captcha")
+    public void captcha(HttpServletRequest request, HttpServletResponse response) throws Exception {
+        SpecCaptcha captcha = new SpecCaptcha(130, 48, 5);
+
+        // 设置独立内置字体
+        captcha.setFont(Captcha.FONT_7);
+        // 设置操作系统字体
+        // captcha.setFont(new Font("楷体", Font.PLAIN, 28));
+        CaptchaUtil.out(captcha,request, response);
+    }
+}
+
 ```
 前端html代码：
 ```html
@@ -374,7 +391,10 @@ public class CaptchaController {
 </script>
 ```
 
-> RedisUtil到这里获取[https://gitee.com/whvse/RedisUtil](https://gitee.com/whvse/RedisUtil)
+> RedisUtil 工具类到这里获取：
+
+https://github.com/YouAreOnlyOne/FastFrameJar/tree/master/Utils/RedisUtil
+
 
 ---
 
