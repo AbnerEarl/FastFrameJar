@@ -1,251 +1,242 @@
-# 定时任务
+# JAVA异常处理jar包
 
-通过把quartz框架进行封装和整合，使得使用起来更加简单，去除原来实现任务的动态的增删查改需要 12 张表，改为修改后的 1 张表实现，通过类路径和方法名，使用反射调用相关的方法执行，service 封装了增删查改的相关方法，以及触发任务、执行任务、移除任务、关闭定时任务容器等方法。
+Java系统开发中进行全局异常管理，对参数异常、请求异常、媒体异常、数据库异常、文件异常、JSON异常、运行时异常等等进行分类处理，可以对异常进行监控并记录，减少代码冗余和重复工作量，让用户界面更友好。
 
-## 使用方法
+# 0.主要异常及状态
 
-1、在 WEB-INF 目录下建立 lib 目录，并把jar包复制到 lib 目录；
+```java
+    COM_ARGUMENT_NOT_VALID(101,"参数无效异常"),
+    COM_ARGUMENT_NOT_READARABLE(102,"参数解析失败"),
+    COM_METHOD_NOT_SUPPORT(103,"不支持当前请求方法"),
+    COM_MEDIA_NOT_SUPPORT(104,"不支持当前媒体类型"),
+    COM_DB_OPERATION_FAILED(105,"数据库异常"),
+    UPLOAD_FILE_EXCEEDED_MAXSIZE(106,"上传文件过大"),
+    COM_ARGUMENT_NOT_SUPPORT_JSON(107,"JSON转换异常"),
+    COM_ARGUMENT_NOT_BIND(108,"参数绑定异常"),
+    COM_INTERNAL_ERROR(109,"服务运行异常");
+```
 
-2、在maven配置文件，即 pom.xml 中，添加以下依赖：
-  
-  ```
-  
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context-support</artifactId>
-      <version>4.2.4.RELEASE</version>
-    </dependency>
-    <dependency>
-      <groupId>org.quartz-scheduler</groupId>
-      <artifactId>quartz</artifactId>
-      <version>2.2.1</version>
-    </dependency>
-    <dependency>
-      <groupId>org.quartz-scheduler</groupId>
-      <artifactId>quartz-jobs</artifactId>
-      <version>2.2.1</version>
-    </dependency>
-    
-    <dependency>
-      <groupId>quartz</groupId>
-      <artifactId>quartz</artifactId>
+# 1.集成到项目
+
+### 1.1 下载 jar 包到本地
+下载地址：
+[https://github.com/YouAreOnlyOne/FastFrameJar/tree/master/ExcepDeal](https://github.com/YouAreOnlyOne/FastFrameJar/tree/master/ExcepDeal)
+
+### 1.2 maven方式引入
+
+把下载的jar包放入本地maven仓库；然后在项目的 pom.xml 文件中添加如下的依赖：
+
+```
+   <dependency>
+       <groupId>com.alibaba</groupId>
+       <artifactId>fastjson</artifactId>
+       <version>1.2.55</version>
+   </dependency>
+
+   <dependency>
+      <groupId>com.ycj.fastframe</groupId>
+      <artifactId>excepdeal</artifactId>
       <version>1.0</version>
-      <scope>system</scope>
-      <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/quartz.jar</systemPath>
-    </dependency>
-    
-   ```
-    
-## 配置文件修改
+   </dependency>
 
-1、在相关配置文件中，增加 entity、dao、controller、service的扫描路径（也可以用继承加注解的方式实现）：
-```
-com.ycj.fastframe.quartz.entity
-com.ycj.fastframe.quartz.dao
-com.ycj.fastframe.quartz.controller
-com.ycj.fastframe.quartz.service
-```
-比如配置service扫描，只需要在原有项目基础路径后面用逗号分隔，加上需要扫描的包路径即可，如下所示（也可以在现有项目中新建类继承相关的类来实现）：
-  ```
-    <!-- 扫描service -->
-    <context:component-scan base-package="com.construct.service,com.ycj.fastframe.quartz.service"/>
- ```
- 
- 2、在spring配置文件中加入quartz的相关初始化bean和实例化方法：
- ```
-    <bean id="userUtils" class="com.ycj.fastframe.quartz.util.SpringContextHolder"/>
-    <bean id="startQuertz" lazy-init="true" autowire="no" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"></bean>
-    <bean id="quartzManager" class="com.ycj.fastframe.quartz.config.QuartzManager" lazy-init="false" init-method="startJobs" >
-        <property name="scheduler" ref="startQuertz" />
-    </bean>
- ```
- 3、继承加注解实现扫描装载
- 
- 如果用继承加注解实现扫描装载，如上面第二点的 <bean id="userUtils" class="com.ycj.fastframe.quartz.util.SpringContextHolder"/> ，可用下面方式实现：
- 
- 1）、新建一个类：MySpringHolder，继承SpringContextHolder：
- ```
- public class MySpringHolder extends SpringContextHolder {
-}
- ```
- 2）添加注解 @Component
- ```
- @Component
-public class MySpringHolder extends SpringContextHolder {
-}
- ```
- 
-## 编写任务方法
-
-1、新建一个类 MyTask，并编写自己需要执行的方法，记得需要加上注解，或者在spring配置文件中申明：
 
 ```
 
-@Component
-public class MyTask {
-    public void startTask(){
-        System.out.println("绝密任务开始执行！");
+### 1.3 lib方式引入
+
+1）**传统的SSM框架的Spring MVC 项目**，在 WEB-INF 目录下建立 lib 目录，并把jar包复制到 lib 目录；然后在项目的 pom.xml 文件中添加如下的依赖：
+
+```
+
+  <dependency>
+     <groupId>com.alibaba</groupId>
+     <artifactId>fastjson</artifactId>
+     <version>1.2.55</version>
+  </dependency>
+        
+  <dependency>
+    <groupId>excepdeal</groupId>
+    <artifactId>excepdeal</artifactId>
+    <version>1.0</version>
+    <scope>system</scope>
+    <systemPath>${project.basedir}/src/main/webapp/WEB-INF/lib/excepdeal.jar</systemPath>
+  </dependency>
+
+```
+
+2）**基于SpringBoot构建的项目**，在 resources 目录下建立 lib 目录，并把jar包复制到 lib 目录；然后在项目的 pom.xml 文件中添加如下的依赖：
+
+```
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.55</version>
+        </dependency>
+        
+        <dependency>
+            <groupId>excepdeal</groupId>
+            <artifactId>excepdeal</artifactId>
+            <version>1.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/src/main/resources/lib/excepdeal.jar</systemPath>
+        </dependency>
+
+```
+
+---
+
+# 2.使用方法
+以监控所有的Controller为例，在controller包下，建立一个 ExceptionController 类 继承 ExceptionDealWithJson 类，并加上 @ExceptionAdvice 注解，具体代码如下：
+
+```java
+package com.cfm.web.controller;
+
+import com.ycj.fastframe.excepdeal.ExceptionAdvice;
+import com.ycj.fastframe.excepdeal.ExceptionDealWithJson;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.WebDataBinder;
+
+/**
+ * @author: Frank
+ * @email 1320259466@qq.com
+ * @date: 2020/3/1
+ * @time: 16:01
+ * @fuction: 全局异常管理.
+ */
+@ExceptionAdvice
+public class ExceptionController extends ExceptionDealWithJson {
+    @Override
+    public void exceptionInfo(Exception e) {
+    //这里可以把异常进行监控、保存日志或者插入数据库
+        System.out.println(e.toString());
     }
 
-    public void synData(){
-        System.out.println("数据同步任务开始");
-        TestDataSyn.quartzSynData();;
-        System.out.println("数据同步任务结束");
+    @Override
+    public String message(String s) {
+        return null;
+    }
+
+    @Override
+    public Object globalData() {
+        return null;
+    }
+
+    @Override
+    public void globalAttributes(Model model) {
+
+    }
+
+    @Override
+    public void globalInitBinder(WebDataBinder webDataBinder) {
+
     }
 }
 
-
 ```
 
-## 生成数据表
-简单设置数据库连接信息，自动生成相应的数据表。
-```
-public class TestQuartz {
-    public static void main(String[] args) {
-        DatabaseInfo databaseInfo=new DatabaseInfo();
-        databaseInfo.setDatabaseURL("jdbc:mysql://127.0.0.1:3306/db_name?useUnicode=true&characterEncoding=utf-8&zeroDateTimeBehavior=convertToNull&transformedBitIsBoolean=true&useSSL=false");
-        databaseInfo.setUserName("root");
-        databaseInfo.setPassword("123456");
-        QuartzJob quartzJob=new QuartzJob();
-        boolean sys_schedule_job = quartzJob.createTable("sys_schedule_job", databaseInfo);
-        System.out.println("执行结果："+sys_schedule_job);
-    }
-  }
-```
+再新建一个 TestController 类，并制造异常，具体代码如下：
 
-## 实现任务的增删改查
+```java
+package com.cfm.web.controller.web;
 
-新建一个Controller类QuartzController来继承ScheduleJobController：
-```
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+/**
+ * @author: Frank
+ * @email 1320259466@qq.com
+ * @date: 2020/2/26
+ * @time: 11:18
+ * @fuction: about the role of class.
+ */
 @Controller
-@RequestMapping("/scheduleJob")
-public class QuartzController extends ScheduleJobController {
+public class TestController {
 
-    @Autowired
-    ScheduleJobServiceImpl scheduleJobService;
-
-    @RequestMapping(value="/test")
+    @RequestMapping("/zero")
     @ResponseBody
-    public String test(HttpServletRequest request) {
-        //获取bean对象
-        QuartzManager quartzManager =SpringContextHolder.getBean("quartzManager");
-        //从数据库查询指定的定时任务
-        ScheduleJob scheduleJob = scheduleJobService.selectById(6);
-        //立即执行
-        //对于刚刚添加到数据库的任务，在添加的时候没有同时 addjog（），则需要先执行addjob（），然后再立即执行
-        scheduleJobService.addJob(scheduleJob);
-        quartzManager.runAJobNow(scheduleJob);
-        //添加定时任务，但不保存到数据库，保存到 RAM
-        quartzManager.addJob("test", "test", "test", "test", QuartzTask.class, "0/3 * * * * ?",new TaskDataImpl());
-
-        return "Quartz start success!";
+    public String zeroException(){
+        int a=8/0;
+        return "success";
     }
 
-    @RequestMapping(value="/addtest")
-    @ResponseBody
-    public String addtest(HttpServletRequest request) {
-        //创建一个定时任务
-        ScheduleJob scheduleJob=new ScheduleJob();
-        scheduleJob.setBeanClass("com.construct.service.quartz.MyTask");
-        scheduleJob.setCreateTime(new Date());
-        //如果不懂cron表达是，可以用相应的工具转换
-        scheduleJob.setCronExpression("*/5 * * * * ?");
-        //cron 转换工具
-        //scheduleJob.setCronExpression(QuartzCronDate.getCron(new Date()));
-        scheduleJob.setIsConcurrent(ScheduleJobConts.CONCURRENT_NOT);
-        scheduleJob.setJobGroup("mytest");
-        scheduleJob.setJobName("test3");
-        //设置任务的启动、停止状态
-        scheduleJob.setJobStatus(ScheduleJobConts.STATUS_RUNNING);
-        scheduleJob.setMethodName("startTask");
-        //保存任务到数据库,这样的操作没有创建触发器，不建议这样做，这样做需要手动调用add()一次，定时任务才能实时生效
-        //scheduleJobService.insert(scheduleJob);
-        //add(scheduleJob);
-        //，保存到数据库同时建立触发器，生成定时任务,推荐使用
-        ResponseEntity<?> responseEntity = scheduleJobService.addScheduleJob(scheduleJob);
-        return JSON.toJSONString(responseEntity);
-    }
 }
 
 ```
 
-## Service 类介绍
-service主要包含两个QuartzService 和ScheduleJobServiceImpl，前者没有实现与数据库的交互，后者实现了与数据库的交互，各个service中都包含相应的增删改查方法，使用时可以点进去详细查看。
 
-## 任务方法实现的另一种方式
-除了上面介绍的在一个任务类中编写相关的任务方法外，还支持实现接口的方式，比如新建一个类TaskDataImpl。
-```
-public class TaskDataImpl implements TaskData {
-    @Override
-    public void execute() {
-        System.out.println("定时任务。。。。。。。。。。。。执行中。。。。。");
+# 3.测试结果
+1）浏览器输入访问路径，返回结果为定义好的 JSON 字符串。
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200301163437579.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTQzNzQwMDk=,size_16,color_FFFFFF,t_70)
+
+2）在 TestController 中没有进行捕捉异常，后台也没有抛出异常，服务器也不会异常终止，只是根据我们的设计打印了异常，这是由于在上面的 exceptionInfo() 方法中我们只是打印异常，这个方法可以把异常进行监控、保存日志或者插入数据库。
+
+```java
+
+	@Override
+    public void exceptionInfo(Exception e) {
+    //这里可以把异常进行监控、保存日志或者插入数据库
+        System.out.println(e.toString());
     }
-}
-```
-
-使用TaskDataImpl定时任务方法：
-```
-public class TestQuartz {
-    public static void main(String[] args) throws BeansException {
-        QuartzManager quartzManager = QuartzConfig.initQuartzTask();
-        try {
-            System.out.println("【系统启动】开始(每1秒输出一次 job2)...");
-            Thread.sleep(5000);
-            System.out.println("【增加job1启动】开始(每1秒输出一次)...");
-            quartzManager.addJob("test", "test", "test", "test", QuartzTask.class, "0/1 * * * * ?",new TaskDataImpl());
-
-            Thread.sleep(5000);
-            System.out.println("【修改job1时间】开始(每2秒输出一次)...");
-            quartzManager.modifyJobTime("test", "test", "test", "test", "0/2 * * * * ?");
-
-            Thread.sleep(10000);
-            System.out.println("【移除job1定时】开始...");
-            quartzManager.removeJob("test", "test", "test", "test");
-
-            // 关掉任务调度容器
-            quartzManager.shutdownJobs();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-}
-```
-
-  
-## 其它方法
-定时任务中还有很多其他方法，根据实际业务需要进行使用！
-
-例如：在定时任务执行前的动作做一些其它的逻辑判断或数据处理。
-
-1、实现DataOperateByJob接口。
 
 ```
-public class TaskOrder implements DataOperateByJob {
-    @Override
-    public void excuteDataOperate(ScheduleJob scheduleJob) {
-        //将待同步的计划写入静态变量中
-        MyTask.projctCode=scheduleJob.getJobGroup();
-        System.out.println("待同步数据库的项目编号："+  myTask.projctCode);
+![在这里插入图片描述](https://img-blog.csdnimg.cn/20200301163757912.png?x-oss-process=image/watermark,type_ZmFuZ3poZW5naGVpdGk,shadow_10,text_aHR0cHM6Ly9ibG9nLmNzZG4ubmV0L3UwMTQzNzQwMDk=,size_16,color_FFFFFF,t_70)
 
-    }
-}
+# 4.其它方案
+1）当我们的 ExceptionController 类继承其它方案，会有不同的效果和使用方式。
+主要的可用方案有：
+
+```java
+
+1、ExceptionDealWithJson  //返回 json 数据
+
+2、ExceptionDealWithEntity  //返回实体数据
+
+3、ExceptionDealWithViewAndError  //返回页面并在model中加入异常信息 e.getMessage()
+
+4、ExceptionDealWithViewAndJson  // 返回页面并在model中加入异常信息的 json 数据
+
+5、ExceptionDealWithViewAndStyle  // 返回页面并在model中加入 异常信息的类型
 ```
 
-2、在编写同步方法的所在类，添加接口赋值加载。
+2）前面两种主要是返回数据，后面三种不仅返回数据还返回页面，继承相应的类之后，会有一个 viewname() 方法指定前端页面名称。在前端页面只需要通过${message} 和 ${error} 进行获取异常信息。
 
+```javascript
+    <%@ page language="java" contentType="text/html; charset=UTF-8" %> 
+
+    <!DOCTYPE html"> 
+
+    <html> 
+
+    <head> 
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"> 
+
+    <title>错误信息</title> 
+
+    </head> 
+
+    <body> 
+
+        <h1>${message}</h1> 
+
+        <p>${error}</p> 
+
+    </body> 
+
+    </html>  
 ```
-@Component
-public class MyTask {
-private static TaskOrder taskOrder=new TaskOrder();
+# 5.其它相关
 
-    static {
-        QuartzManager.dataOperateByJob=taskOrder;
-    }
-}
-```
+快速集成框架 jar 包：
+[https://blog.csdn.net/u014374009/category_9535972.html](https://blog.csdn.net/u014374009/category_9535972.html)
 
-## 常见问题及解决
-https://blog.csdn.net/u014374009/article/details/97638636
+代码主页：
+[https://github.com/YouAreOnlyOne](https://github.com/YouAreOnlyOne)
 
 
-
+技术介绍：
+[https://me.csdn.net/u014374009](https://me.csdn.net/u014374009)
