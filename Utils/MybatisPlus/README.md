@@ -5,7 +5,7 @@
 根据项目山的相关情况进行添加，如 传统的 SSM 项目 和基于 SpringBoot 的项目略有不同，这里是所有用到的依赖，根据需要添加：
 
 ```
-	<!--代码生成开始-->
+    <!--代码生成开始-->
     <dependency>
       <groupId>com.baomidou</groupId>
       <artifactId>mybatis-plus</artifactId>
