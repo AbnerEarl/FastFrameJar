@@ -100,7 +100,19 @@ public class TestLogSupervise extends RequestLogAspect {
 
  ```
  
-4、在spring配置文件进行配置（Springboot构建的项目可以省略）：
+4、在spring配置文件进行配置
+
+（Springboot构建的项目可以省略，在启动类上添加注解：@EnableAspectJAutoProxy(exposeProxy=true,proxyTargetClass=true)  ；
+
+也可以把配置写成spring配置文件，在springboot启动类上引入spring.xml配置文件 @ImportResource({"classpath:/spring.xml"})  ；
+
+还可以在 springboot的默认配置文件中添加：在application.yml中有以下配置
+```
+spring:
+  aop:
+    #auto: true #默认为true，可省略
+    proxy-target-class: true # 默认为false即JDK动态代理，我们一般要设为true，使用CGLIB代理）：
+```
 ```
 <bean id="logService" class="com.construct.test.log.TestLogSupervise"></bean>
 <aop:aspectj-autoproxy expose-proxy="true" proxy-target-class="true" />
