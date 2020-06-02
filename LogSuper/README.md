@@ -4,9 +4,9 @@
 
 ## 使用方法
 
-1、在 WEB-INF 目录下建立 lib 目录，并把jar包复制到 lib 目录；
+1、在 WEB-INF 目录下建立 lib 目录，并把jar包复制到 lib 目录（Springboot构建的项目可以在resources目录下构建）；
 
-2、在maven配置文件，即 pom.xml 中，除了添加spring相关依赖以外，还需添加以下依赖：
+2、在maven配置文件，即 pom.xml 中，除了添加spring相关依赖以外，还需添加以下依赖（Springboot构建的项目可以省略其中关于spring相关的依赖）：
   
   ```
   
@@ -100,7 +100,7 @@ public class TestLogSupervise extends RequestLogAspect {
 
  ```
  
-4、在spring配置文件进行配置：
+4、在spring配置文件进行配置（Springboot构建的项目可以省略）：
 ```
 <bean id="logService" class="com.construct.test.log.TestLogSupervise"></bean>
 <aop:aspectj-autoproxy expose-proxy="true" proxy-target-class="true" />
