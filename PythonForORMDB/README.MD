@@ -12,8 +12,16 @@
 5. Free and open source, continuous improvement and update.
 
 # How to use?
-It's so easy, it only takes two steps.
+
+It's so easy, it only takes three steps.
+
 ### step 1:
+
+Install the library:
+```buildoutcfg
+pip install ormdb
+```
+### step 2:
 
 create a object:
 
@@ -36,7 +44,7 @@ class User(Model):
 
 ```
 
-### step 2:
+### step 3:
 
 Perform relevant operations on the data:
 
@@ -82,3 +90,7 @@ saveData()
 # More
 
 We are working hard to perfect...
+
+# Suggestion
+
+https://github.com/YouAreOnlyOne/FastFrameJar/issues
