@@ -12,8 +12,8 @@
 5. Free and open source, continuous improvement and update.
 
 # How to use?
-
-step 1:
+It's so easy, it only takes two steps.
+### step 1:
 
 create a object:
 
@@ -36,7 +36,7 @@ class User(Model):
 
 ```
 
-step 2:
+### step 2:
 
 Perform relevant operations on the data:
 
