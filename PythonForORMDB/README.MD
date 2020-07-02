@@ -53,11 +53,15 @@ Perform relevant operations on the data:
 # coding: utf-8
 # author: Frank YCJ
 # email: 1320259466@qq.com
-
+from ormdb.DbStyle import DbStyle
 from ormdb.LogLevel import LogLevel
 from ormdb import Config
-# Set log level
+# set log level.
 Config.set_log_level(LogLevel.All.value)
+# Set the connection database type.
+Config.set_db_style(DbStyle.MySQL.value)
+# Set database connection information.
+Config.set_db_config(password="ycj5201",database="test_python")
 from ormdb.User import User
 
 
