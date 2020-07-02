@@ -9,7 +9,7 @@
 
 4. Datas for data synchronization tools among multiple databases.;
 
-5. ......
+5. More functions are waiting for you to use.
 
 # How to use?
 
@@ -18,12 +18,13 @@ It's so easy, it only takes two steps.
 ### step 1:
 
 Install the library:
+
 ```buildoutcfg
-pip install utils
+pip install superutils
 ```
 ### step 2:
 
-create a object:
+Use tools:
 
 ```buildoutcfg
 #!/usr/bin/env python
@@ -31,7 +32,7 @@ create a object:
 # author: Frank YCJ
 # email: 1320259466@qq.com
 
-from utils import Emails
+from superutils import Emails
 
 Emails.send_gmail()
 Emails.send_gmail_html()
